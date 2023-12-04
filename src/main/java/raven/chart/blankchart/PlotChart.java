@@ -28,7 +28,7 @@ public abstract class PlotChart extends JPanel implements ChartRender {
         add(layeredPane);
         panelHeader = new JPanel(new BorderLayout());
         panelRender = new PanelChartRender(this);
-        panelValues = new JPanel(new MigLayout("wrap,fill", "trailing", "fill"));
+        panelValues = new JPanel(new MigLayout("wrap,fill,btt,insets 2 5 2 5", "trailing", "fill"));
         panelLegend = new JPanel(new MigLayout("fill,gapx 30", "fill", "fill"));
 
         panelValues.putClientProperty(FlatClientProperties.STYLE, ""

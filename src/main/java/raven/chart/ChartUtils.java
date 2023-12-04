@@ -31,6 +31,9 @@ public class ChartUtils {
                 break;
             }
         }
+        if (!component.getComponentOrientation().isLeftToRight() && index != -1) {
+            index = (column - 1) - index;
+        }
         return index;
     }
 

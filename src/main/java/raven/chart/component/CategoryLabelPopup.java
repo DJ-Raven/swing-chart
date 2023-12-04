@@ -62,6 +62,7 @@ public class CategoryLabelPopup extends JPanel {
                 + "font:-1");
         panel.add(labelRow);
         panel.add(labelValue);
+        panel.applyComponentOrientation(getComponentOrientation());
         return panel;
     }
 

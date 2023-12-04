@@ -151,8 +151,15 @@ public class LineChart extends PlotChart {
 
         double space = width / (double) columnCount;
         SplinePoint point[] = new SplinePoint[columnCount];
+        boolean ltr = getComponentOrientation().isLeftToRight();
+        int index = ltr ? -1 : columnCount;
         for (int i = 0; i < columnCount; i++) {
-            double value = categoryDataset.getValue(row, i).doubleValue();
+            if (ltr) {
+                index++;
+            } else {
+                index--;
+            }
+            double value = categoryDataset.getValue(row, index).doubleValue();
             double x = (space * i) + (space / 2);
             double y = height - ((value / maxValue) * height);
             point[i] = new SplinePoint(x, y);
@@ -183,10 +190,11 @@ public class LineChart extends PlotChart {
 
     private void createSelectedIndex(Graphics2D g2, int height) {
         if (selectedIndex >= 0) {
+            int index = getComponentOrientation().isLeftToRight() ? selectedIndex : (categoryDataset.getColumnCount() - 1 - selectedIndex);
             if (mapSpline.containsKey(0)) {
                 g2.setColor(UIManager.getColor("Component.borderColor"));
                 float size = UIScale.scale(1.5f);
-                SplinePoint point = mapSpline.get(0).getSpline(chartType, selectedIndex);
+                SplinePoint point = mapSpline.get(0).getSpline(chartType, index);
                 double x = point.getX() - size / 2;
                 double y = 0;
                 g2.fill(new RoundRectangle2D.Double(x, y, size, height, size, size));
@@ -198,7 +206,7 @@ public class LineChart extends PlotChart {
             List<SplinePoint> points = new ArrayList<>();
             for (int i = 0; i < rows; i++) {
                 if (mapSpline.containsKey(i)) {
-                    SplinePoint point = mapSpline.get(i).getSpline(chartType, selectedIndex);
+                    SplinePoint point = mapSpline.get(i).getSpline(chartType, index);
                     g2.setColor(chartColor.getColor(i));
                     g2.setComposite(AlphaComposite.SrcOver.derive(.5f));
                     g2.fill(new Ellipse2D.Double(point.getX() - s / 2, point.getY() - s / 2, s, s));

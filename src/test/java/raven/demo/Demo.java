@@ -29,7 +29,7 @@ public class Demo extends JFrame {
         setLayout(new MigLayout("wrap"));
         createLineChart();
         createBarChart();
-        applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+       // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
     }
 
     private void createLineChart() {
