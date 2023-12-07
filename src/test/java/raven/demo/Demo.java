@@ -46,7 +46,7 @@ public class Demo extends JFrame {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
         Random ran = new Random();
-        int randomDate = 7;
+        int randomDate =7;
         for (int i = 1; i <= randomDate; i++) {
             String date = df.format(cal.getTime());
             categoryDataset.addValue(ran.nextInt(700) + 5, "Income", date);

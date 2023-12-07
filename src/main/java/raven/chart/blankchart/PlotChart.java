@@ -6,7 +6,6 @@ import raven.chart.ChartLegendRenderer;
 import raven.chart.data.ChartDataInfo2D;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -23,34 +22,27 @@ public abstract class PlotChart extends JPanel implements ChartRender {
     }
 
     private void init() {
-        setBorder(new EmptyBorder(15, 15, 15, 15));
-        putClientProperty(FlatClientProperties.STYLE, ""
-                + "border:15,15,15,15;"
-                + "arc:10;"
-                + "background:$Chart.background");
         layeredPane = new JLayeredPane();
-        layeredPane.setLayout(new MigLayout("debug,fill", "[fill]", "[fill]"));
+        layeredPane.setLayout(new MigLayout("fill", "[fill]", "[fill]"));
         setLayout(new BorderLayout());
         add(layeredPane);
         panelHeader = new JPanel(new BorderLayout());
         panelRender = new PanelChartRender(this);
-        panelValues = new JPanel(new MigLayout("wrap,fill", "fill", "fill"));
+        panelValues = new JPanel(new MigLayout("wrap,fill", "trailing", "fill"));
         panelLegend = new JPanel(new MigLayout("fill,gapx 30", "fill", "fill"));
-        panelValues.setBorder(new EmptyBorder(10, 0, 10, 0));
-        panelRender.setBorder(new EmptyBorder(10, 0, 10, 0));
+
         panelValues.putClientProperty(FlatClientProperties.STYLE, ""
-                + "border:10,0,10,0;"
-                + "background:$Chart.background");
+                + "background:null");
         panelRender.putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:10,10,10,10;"
-                + "background:$Chart.background");
+                + "background:null");
         panelHeader.putClientProperty(FlatClientProperties.STYLE, ""
-                + "background:$Chart.background");
+                + "background:null");
         panelLegend.putClientProperty(FlatClientProperties.STYLE, ""
-                + "background:$Chart.background");
+                + "background:null");
         layeredPane.add(panelHeader, "cell 0 0,span 2,grow 0");
         layeredPane.add(panelValues, "cell 0 1,grow 0");
-        layeredPane.add(panelRender,"cell 1 1");
+        layeredPane.add(panelRender, "cell 1 1");
         layeredPane.add(panelLegend, "cell 1 2");
     }
 

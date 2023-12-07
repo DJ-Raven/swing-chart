@@ -13,6 +13,7 @@ import raven.chart.simple.SimpleDataLineChart;
 import raven.chart.spline.Spline;
 import raven.chart.spline.SplinePoint;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -124,9 +125,6 @@ public class LineChart extends PlotChart {
         BufferedImage buffImage = new BufferedImage(chartRender.getWidth(), chartRender.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = buffImage.createGraphics();
         ChartUtils.registerRenderingHin(g2);
-        if (chartType == ChartType.CURVE) {
-            ChartUtils.registerRenderingHinStrokePure(g2);
-        }
         g2.translate(x, y);
         createLine(g2, width, height);
         createRows(g2, width, height);
@@ -176,7 +174,7 @@ public class LineChart extends PlotChart {
     private void createLine(Graphics2D g2, int width, int height) {
         double lineCount = niceScale.getMaxTicks();
         double space = height / lineCount;
-        g2.setColor(FlatUIUtils.getUIColor("Chart.lineColor", new Color(150, 150, 150)));
+        g2.setColor(UIManager.getColor("Component.borderColor"));
         float dash[] = {UIScale.scale(3f)};
         float f = UIScale.scale(1f);
         for (int i = 0; i <= lineCount; i++) {
@@ -189,7 +187,7 @@ public class LineChart extends PlotChart {
     private void createSelectedIndex(Graphics2D g2, int height) {
         if (selectedIndex >= 0) {
             if (mapSpline.containsKey(0)) {
-                g2.setColor(FlatUIUtils.getUIColor("Chart.lineColor", new Color(150, 150, 150)));
+                g2.setColor(UIManager.getColor("Component.borderColor"));
                 float size = UIScale.scale(1.5f);
                 SplinePoint point = mapSpline.get(0).getSpline(chartType, selectedIndex);
                 double x = point.getX() - size / 2;
