@@ -23,7 +23,7 @@ public abstract class PlotChart extends JPanel implements ChartRender {
 
     private void init() {
         layeredPane = new JLayeredPane();
-        layeredPane.setLayout(new MigLayout("fill", "[fill]", "[fill]"));
+        layeredPane.setLayout(new MigLayout("fill", "[grow 0][fill]", "[grow 0][fill][grow 0]"));
         setLayout(new BorderLayout());
         add(layeredPane);
         panelHeader = new JPanel(new BorderLayout());

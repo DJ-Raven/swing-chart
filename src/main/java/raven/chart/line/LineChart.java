@@ -1,6 +1,5 @@
 package raven.chart.line;
 
-import com.formdev.flatlaf.ui.FlatUIUtils;
 import com.formdev.flatlaf.util.UIScale;
 import raven.chart.ChartColor;
 import raven.chart.ChartUtils;
@@ -21,10 +20,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class LineChart extends PlotChart {
 

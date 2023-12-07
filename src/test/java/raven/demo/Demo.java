@@ -6,7 +6,10 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartLegendRenderer;
+import raven.chart.ChartUtils;
+import raven.chart.bar.HorizontalBarChart;
 import raven.chart.data.category.DefaultCategoryDataset;
+import raven.chart.data.pie.DefaultPieDataset;
 import raven.chart.line.LineChart;
 
 import javax.swing.*;
@@ -23,8 +26,10 @@ public class Demo extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
-        setLayout(new MigLayout(""));
+        setLayout(new MigLayout("wrap"));
         createLineChart();
+        createBarChart();
+        applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
     }
 
     private void createLineChart() {
@@ -46,12 +51,18 @@ public class Demo extends JFrame {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
         Random ran = new Random();
-        int randomDate =7;
+        int randomDate = 7;
         for (int i = 1; i <= randomDate; i++) {
             String date = df.format(cal.getTime());
-            categoryDataset.addValue(ran.nextInt(700) + 5, "Income", date);
-            categoryDataset.addValue(ran.nextInt(700) + 5, "Expense", date);
-            categoryDataset.addValue(ran.nextInt(700) + 5, "Profit", date);
+          if(i==1){
+              categoryDataset.addValue(ran.nextInt(1) + 5, "Income", date);
+              categoryDataset.addValue(ran.nextInt(1) + 5, "Expense", date);
+              categoryDataset.addValue(ran.nextInt(1) + 5, "Profit", date);
+          }else{
+              categoryDataset.addValue(ran.nextInt(700) + 5, "Income", date);
+              categoryDataset.addValue(ran.nextInt(700) + 5, "Expense", date);
+              categoryDataset.addValue(ran.nextInt(700) + 5, "Profit", date);
+          }
 
             cal.add(Calendar.DATE, 1);
         }
@@ -85,9 +96,37 @@ public class Demo extends JFrame {
         lineChart.getChartColor().addColor(Color.decode("#38bdf8"), Color.decode("#fb7185"), Color.decode("#34d399"));
         JLabel header = new JLabel("Income Data");
         header.putClientProperty(FlatClientProperties.STYLE, ""
-                + "font:+2;"
-                + "border:0,0,5,0");
+                + "font:+2");
         lineChart.setHeader(header);
+    }
+
+    private void createBarChart() {
+        // BarChart 1
+        HorizontalBarChart barChart1 = new HorizontalBarChart();
+        JLabel header1 = new JLabel("Monthly Income");
+        header1.putClientProperty(FlatClientProperties.STYLE, ""
+                + "font:+2");
+        barChart1.setHeader(header1);
+        barChart1.setBarColor(Color.decode("#f97316"));
+        barChart1.setDataset(createData());
+        JPanel panel1 = new JPanel(new BorderLayout());
+        panel1.putClientProperty(FlatClientProperties.STYLE, ""
+                + "border:5,5,5,5,$Component.borderColor,,20;"
+                + "background:$Chart.background");
+        panel1.add(barChart1);
+        add(panel1, "split 2,gap 0 20, width 500");
+    }
+
+    private DefaultPieDataset createData() {
+        DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
+        Random random = new Random();
+        dataset.addValue("July (ongoing)", random.nextInt(100));
+        dataset.addValue("June", random.nextInt(100));
+        dataset.addValue("May", random.nextInt(100));
+        dataset.addValue("April", random.nextInt(100));
+        dataset.addValue("March", random.nextInt(100));
+        dataset.addValue("February", random.nextInt(100));
+        return dataset;
     }
 
     private LineChart lineChart;
