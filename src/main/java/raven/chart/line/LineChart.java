@@ -125,6 +125,7 @@ public class LineChart extends PlotChart {
         g2.translate(x, y);
         createLine(g2, width, height);
         createRows(g2, width, height);
+        g2.dispose();
         return buffImage;
     }
 
@@ -256,8 +257,10 @@ public class LineChart extends PlotChart {
     }
 
     public void setChartType(ChartType chartType) {
-        this.chartType = chartType;
-        updateImageRender();
+        if (this.chartType != chartType) {
+            this.chartType = chartType;
+            updateImageRender();
+        }
     }
 
     public static enum ChartType {

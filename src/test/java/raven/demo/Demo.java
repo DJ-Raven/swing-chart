@@ -11,6 +11,7 @@ import raven.chart.bar.HorizontalBarChart;
 import raven.chart.data.category.DefaultCategoryDataset;
 import raven.chart.data.pie.DefaultPieDataset;
 import raven.chart.line.LineChart;
+import raven.chart.pie.PieChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,9 +28,10 @@ public class Demo extends JFrame {
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
         setLayout(new MigLayout("wrap"));
-        createLineChart();
+        //createLineChart();
         // createBarChart();
         // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        createPieChart();
     }
 
     private void createLineChart() {
@@ -116,6 +118,23 @@ public class Demo extends JFrame {
                 + "background:$Chart.background");
         panel1.add(barChart1);
         add(panel1, "split 2,gap 0 20, width 500");
+    }
+
+    private void createPieChart() {
+        PieChart pieChart = new PieChart();
+        JLabel header1 = new JLabel("Monthly Income");
+        header1.putClientProperty(FlatClientProperties.STYLE, ""
+                + "font:+2");
+        pieChart.setHeader(header1);
+        pieChart.getChartColor().addColor(Color.decode("#f87171"), Color.decode("#fb923c"), Color.decode("#fbbf24"),Color.decode("#a3e635"),Color.decode("#34d399"),Color.decode("#22d3ee"),Color.decode("#818cf8"),Color.decode("#c084fc"));
+
+        pieChart.setDataset(createData());
+        JPanel panel1 = new JPanel(new BorderLayout());
+        panel1.putClientProperty(FlatClientProperties.STYLE, ""
+                + "border:5,5,5,5,$Component.borderColor,,20;"
+                + "background:$Chart.background");
+        panel1.add(pieChart);
+        add(panel1);
     }
 
     private DefaultPieDataset createData() {
