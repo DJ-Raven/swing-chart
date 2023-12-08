@@ -2,7 +2,6 @@ package raven.chart.pie;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.ui.FlatUIUtils;
 import com.formdev.flatlaf.util.UIScale;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartColor;
@@ -15,12 +14,16 @@ import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PieChart extends JPanel {
 
+    private NumberFormat format = new DecimalFormat("#,##0.##");
     private ChartType chartType = ChartType.DEFAULT;
     private int donutSize = -1;
     private DefaultPieDataset<String> dataset = new SimpleDataBarChart();
@@ -227,6 +230,7 @@ public class PieChart extends JPanel {
             float start = 90;
             ChartUtils.registerRenderingHinStrokePure(g2);
             g2.setStroke(new BasicStroke(UIScale.scale(1.5f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            float angles[] = new float[items.size()];
             for (int i = 0; i < items.size(); i++) {
                 Item item = items.get(i);
                 float angle = -(item.percent * 360f);
@@ -239,7 +243,26 @@ public class PieChart extends JPanel {
                 g2.setColor(getParent().getBackground());
                 g2.draw(area);
                 start += angle;
+                angles[i] = start - (angle / 2);
             }
+            g2.setFont(getParent().getFont());
+            g2.setColor(Color.decode("#FAFAFA"));
+            for (int i = 0; i < angles.length; i++) {
+                drawString(g2, format.format(items.get(i).percent * 100) + "%", x, y, size, (360 - angles[i]));
+            }
+        }
+
+        private void drawString(Graphics2D g2, String text, int x, int y, int size, float angle) {
+            int centerX = x + size / 2;
+            int centerY = y + size / 2;
+            float dis = (size / 2) * 0.7f;
+            double lx = centerX + Math.cos(Math.toRadians(angle)) * dis;
+            double ly = centerY + Math.sin(Math.toRadians(angle)) * dis;
+            FontMetrics fm = g2.getFontMetrics();
+            Rectangle2D rec = fm.getStringBounds(text, g2);
+            lx -= rec.getWidth() / 2;
+            ly -= rec.getHeight() / 2;
+            g2.drawString(text, (float) lx, (float) (ly + fm.getAscent()));
         }
 
         private Area createAreaCut(int width, int height, float size) {

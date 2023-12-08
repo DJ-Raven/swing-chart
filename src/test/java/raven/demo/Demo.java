@@ -122,6 +122,8 @@ public class Demo extends JFrame {
 
     private void createPieChart() {
         PieChart pieChart = new PieChart();
+        pieChart.putClientProperty(FlatClientProperties.STYLE,"" +
+                "font:+1");
         JLabel header1 = new JLabel("Monthly Income");
         header1.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:+2");
