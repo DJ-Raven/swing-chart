@@ -28,12 +28,13 @@ public class Demo extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new MigLayout("wrap"));
         createLineChart();
-        createBarChart();
-       // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        // createBarChart();
+        // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
     }
 
     private void createLineChart() {
         lineChart = new LineChart();
+        //lineChart.setChartType(LineChart.ChartType.LINE);
         JPanel panel = new JPanel(new BorderLayout());
         panel.putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:5,5,5,5,$Component.borderColor,,20;"
@@ -54,15 +55,15 @@ public class Demo extends JFrame {
         int randomDate = 7;
         for (int i = 1; i <= randomDate; i++) {
             String date = df.format(cal.getTime());
-          if(i==1){
-              categoryDataset.addValue(ran.nextInt(1) + 5, "Income", date);
-              categoryDataset.addValue(ran.nextInt(1) + 5, "Expense", date);
-              categoryDataset.addValue(ran.nextInt(1) + 5, "Profit", date);
-          }else{
-              categoryDataset.addValue(ran.nextInt(700) + 5, "Income", date);
-              categoryDataset.addValue(ran.nextInt(700) + 5, "Expense", date);
-              categoryDataset.addValue(ran.nextInt(700) + 5, "Profit", date);
-          }
+            if (i == 1) {
+                categoryDataset.addValue(ran.nextInt(1) + 5, "Income", date);
+                categoryDataset.addValue(ran.nextInt(1) + 5, "Expense", date);
+                categoryDataset.addValue(ran.nextInt(1) + 5, "Profit", date);
+            } else {
+                categoryDataset.addValue(ran.nextInt(700) + 5, "Income", date);
+                categoryDataset.addValue(ran.nextInt(700) + 5, "Expense", date);
+                categoryDataset.addValue(ran.nextInt(700) + 5, "Profit", date);
+            }
 
             cal.add(Calendar.DATE, 1);
         }

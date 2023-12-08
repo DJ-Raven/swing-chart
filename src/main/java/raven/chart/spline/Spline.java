@@ -70,7 +70,7 @@ public class Spline {
 
     public SplinePoint getSpline(LineChart.ChartType type, float t) {
         if (type == LineChart.ChartType.LINE) {
-            return points[(int) t];
+            return points[(int) (t + 1)];
         }
         int p0, p1, p2, p3;
         p1 = (int) t + 1;
