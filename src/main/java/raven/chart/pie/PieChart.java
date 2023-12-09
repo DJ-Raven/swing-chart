@@ -11,6 +11,8 @@ import raven.chart.simple.SimpleDataBarChart;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -26,6 +28,7 @@ public class PieChart extends JPanel {
     private NumberFormat format = new DecimalFormat("#,##0.##");
     private ChartType chartType = ChartType.DEFAULT;
     private int donutSize = -1;
+    private int selectedBorderSize = 7;
     private DefaultPieDataset<String> dataset = new SimpleDataBarChart();
     private int selectedIndex = -1;
 
@@ -58,7 +61,7 @@ public class PieChart extends JPanel {
         labelNoData.setHorizontalTextPosition(SwingConstants.CENTER);
         labelNoData.setVerticalTextPosition(SwingConstants.BOTTOM);
         layeredPane.add(panelHeader);
-        layeredPane.add(panelRender, "width 150:300,height 150:300");
+        layeredPane.add(panelRender, "width 150:250,height 150:250");
         layeredPane.add(panelFooter);
         updateDataset();
     }
@@ -172,7 +175,64 @@ public class PieChart extends JPanel {
 
         private void init() {
             items = new ArrayList<>();
+            createMouseEvent();
         }
+
+        private void createMouseEvent() {
+            MouseAdapter mouseEvent = new MouseAdapter() {
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if (selectedIndex != -1) {
+                        selectedIndex = -1;
+                        repaint();
+                    }
+                }
+
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    int index = getSelectedIndex(e.getPoint());
+                    if (selectedIndex != index) {
+                        selectedIndex = index;
+                        repaint();
+                    }
+                }
+            };
+            addMouseListener(mouseEvent);
+            addMouseMotionListener(mouseEvent);
+        }
+
+        private int getSelectedIndex(Point point) {
+            float angle = getAngleOf(point);
+            float start = 0;
+            int index = -1;
+            for (int i = 0; i < items.size(); i++) {
+                Item item = items.get(i);
+                float ag = (item.percent * 360f);
+                if (angle >= (start) && angle <= (start + ag)) {
+                    index = i;
+                    break;
+                }
+                start += ag;
+            }
+            return index;
+        }
+
+        private float getAngleOf(Point point) {
+            Insets insets = getInsets();
+            int width = getWidth() - (insets.left + insets.right);
+            int height = getHeight() - (insets.top + insets.bottom);
+            float centerX = insets.left + width / 2;
+            float centerY = insets.top + height / 2;
+            float x = point.x - centerX;
+            float y = point.y - centerY;
+            double angle = Math.toDegrees(Math.atan2(y, x)) + 90;
+            if (angle < 0) {
+                angle += 360;
+            }
+            return (float) angle;
+        }
+
 
         public void addItem(String key, double value, float percent) {
             items.add(new Item(key, value, percent));
@@ -204,7 +264,7 @@ public class PieChart extends JPanel {
                     g2.drawImage(imageRender, x, y, null);
                 }
                 g2.translate(x, y);
-                createSelectedIndex(g2, height);
+                createSelectedIndex(g2, width, height);
             }
             g2.dispose();
         }
@@ -214,16 +274,15 @@ public class PieChart extends JPanel {
             Graphics2D g2 = buffImage.createGraphics();
             ChartUtils.registerRenderingHin(g2);
             g2.translate(x, y);
-            int border = UIScale.scale(10);
+            int border = UIScale.scale(selectedBorderSize);
             createPie(g2, width, height, border);
-            // createRows(g2, width, height);
             g2.dispose();
             System.out.println("Create");
             return buffImage;
         }
 
         private void createPie(Graphics2D g2, int width, int height, int broder) {
-            int size = Math.min(width, height) - broder;
+            int size = Math.min(width, height) - (broder * 2);
             Area areaCut = chartType == ChartType.DEFAULT ? null : createAreaCut(width, height, size * 0.5f);
             int x = (width - size) / 2;
             int y = (height - size) / 2;
@@ -271,8 +330,31 @@ public class PieChart extends JPanel {
             return new Area(new Ellipse2D.Double(x, y, size, size));
         }
 
-        private void createSelectedIndex(Graphics2D g2, int height) {
-
+        private void createSelectedIndex(Graphics2D g2, int width, int height) {
+            if (selectedIndex != -1 && selectedIndex < items.size()) {
+                int size = Math.min(width, height);
+                int x = (size - width) / 2;
+                int y = (size - height) / 2;
+                float start = 90;
+                for (int i = 0; i < items.size(); i++) {
+                    Item item = items.get(i);
+                    float angle = -(item.percent * 360f);
+                    if (i == selectedIndex) {
+                        float stroke = UIScale.scale(1.5f / 2f);
+                        Area area = new Area(new Arc2D.Double(x, y, size, size, start - stroke / 2f, angle + stroke, Arc2D.PIE));
+                        if (selectedBorderSize > 0) {
+                            double border = UIScale.scale(selectedBorderSize) - stroke;
+                            double s = size - (border * 2);
+                            area.subtract(new Area(new Ellipse2D.Double(x + border, y + border, s, s)));
+                        }
+                        g2.setColor(chartColor.getColor(i));
+                        g2.setComposite(AlphaComposite.SrcOver.derive(0.5f));
+                        g2.fill(area);
+                        break;
+                    }
+                    start += angle;
+                }
+            }
         }
 
         private class Item {
