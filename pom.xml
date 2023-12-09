@@ -6,7 +6,7 @@
 
     <groupId>raven.chart</groupId>
     <artifactId>swing-chart</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-beta</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

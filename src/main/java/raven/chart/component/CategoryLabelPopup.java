@@ -81,7 +81,7 @@ public class CategoryLabelPopup extends JPanel {
     }
 
     private Color getColor() {
-        Color color = FlatUIUtils.getUIColor("Chart.background", getBackground());
+        Color color = getBackground();
         if (FlatLaf.isLafDark()) {
             return ColorFunctions.lighten(color, 0.05f);
         } else {

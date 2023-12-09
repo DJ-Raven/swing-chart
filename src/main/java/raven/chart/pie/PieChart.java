@@ -6,6 +6,8 @@ import com.formdev.flatlaf.util.UIScale;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartColor;
 import raven.chart.ChartUtils;
+import raven.chart.component.ColorIcon;
+import raven.chart.component.PieLabelPopup;
 import raven.chart.data.pie.DefaultPieDataset;
 import raven.chart.simple.SimpleDataBarChart;
 
@@ -56,14 +58,31 @@ public class PieChart extends JPanel {
                 + "background:null");
         panelFooter.putClientProperty(FlatClientProperties.STYLE, ""
                 + "background:null");
-
+        panelLegend = new JPanel(new MigLayout("fillx,wrap,al center center", "fill"));
         labelNoData = new JLabel("Empty Data", new FlatSVGIcon("com/raven/chart/empty.svg"), JLabel.CENTER);
         labelNoData.setHorizontalTextPosition(SwingConstants.CENTER);
         labelNoData.setVerticalTextPosition(SwingConstants.BOTTOM);
         layeredPane.add(panelHeader);
-        layeredPane.add(panelRender, "width 150:250,height 150:250");
+        layeredPane.add(panelRender, "width 150:250,height 150:250,split 2");
+        layeredPane.add(panelLegend);
         layeredPane.add(panelFooter);
+        initPopupComponent();
         updateDataset();
+    }
+
+    public void setSelectedIndex(int selectedIndex) {
+        if (this.selectedIndex != selectedIndex) {
+            this.selectedIndex = selectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < dataset.getItemCount()) {
+                String title = dataset.getKey(selectedIndex);
+                String value = dataset.getValue(selectedIndex) + " (" + format.format(getPercent(selectedIndex) * 100) + "%)";
+                popupComponents.setValue(title, value);
+                popupComponents.setVisible(true);
+            } else {
+                popupComponents.setVisible(false);
+            }
+            repaint();
+        }
     }
 
     public DefaultPieDataset<String> getDataset() {
@@ -78,6 +97,7 @@ public class PieChart extends JPanel {
     private void updateDataset() {
         int count = dataset.getItemCount();
         panelRender.clear();
+        panelLegend.removeAll();
         if (count > 0) {
             noData(false);
             double maxValue = 0;
@@ -88,11 +108,33 @@ public class PieChart extends JPanel {
                 double value = dataset.getValue(i).doubleValue();
                 float percent = (float) (value / maxValue);
                 panelRender.addItem(dataset.getKey(i), value, percent);
+                panelLegend.add(createLegend(i));
             }
         } else {
             noData(true);
         }
-        panelRender.repaint();
+        panelLegend.revalidate();
+        repaint();
+    }
+
+    private float getPercent(int index) {
+        return panelRender.items.get(index).percent;
+    }
+
+    private Component createLegend(int index) {
+        JLabel label = new JLabel(dataset.getKey(index));
+        label.setIcon(new ColorIcon(chartColor.getColor(index)));
+        return label;
+    }
+
+    private void initPopupComponent() {
+        if (popupComponents != null) {
+            layeredPane.remove(popupComponents);
+        }
+        popupComponents = new PieLabelPopup();
+        popupComponents.setVisible(false);
+        layeredPane.setLayer(popupComponents, JLayeredPane.POPUP_LAYER);
+        layeredPane.add(popupComponents, "pos 0 0", 0);
     }
 
     private void updateImageRender() {
@@ -113,6 +155,8 @@ public class PieChart extends JPanel {
     private PanelRender panelRender;
     private JPanel panelHeader;
     private JPanel panelFooter;
+    private JPanel panelLegend;
+    protected PieLabelPopup popupComponents;
     private JLabel labelNoData;
 
 
@@ -163,7 +207,7 @@ public class PieChart extends JPanel {
 
     private class PanelRender extends JPanel {
 
-        private List<Item> items;
+        protected List<Item> items;
         private BufferedImage imageRender;
         private boolean imageUpdated;
         private int oldWidth;
@@ -184,18 +228,14 @@ public class PieChart extends JPanel {
                 @Override
                 public void mouseExited(MouseEvent e) {
                     if (selectedIndex != -1) {
-                        selectedIndex = -1;
-                        repaint();
+                        setSelectedIndex(-1);
                     }
                 }
 
                 @Override
                 public void mouseMoved(MouseEvent e) {
                     int index = getSelectedIndex(e.getPoint());
-                    if (selectedIndex != index) {
-                        selectedIndex = index;
-                        repaint();
-                    }
+                    setSelectedIndex(index);
                 }
             };
             addMouseListener(mouseEvent);
@@ -232,7 +272,6 @@ public class PieChart extends JPanel {
             }
             return (float) angle;
         }
-
 
         public void addItem(String key, double value, float percent) {
             items.add(new Item(key, value, percent));
@@ -277,7 +316,6 @@ public class PieChart extends JPanel {
             int border = UIScale.scale(selectedBorderSize);
             createPie(g2, width, height, border);
             g2.dispose();
-            System.out.println("Create");
             return buffImage;
         }
 
@@ -333,8 +371,8 @@ public class PieChart extends JPanel {
         private void createSelectedIndex(Graphics2D g2, int width, int height) {
             if (selectedIndex != -1 && selectedIndex < items.size()) {
                 int size = Math.min(width, height);
-                int x = (size - width) / 2;
-                int y = (size - height) / 2;
+                int x = (width - size) / 2;
+                int y = (height - size) / 2;
                 float start = 90;
                 for (int i = 0; i < items.size(); i++) {
                     Item item = items.get(i);
@@ -354,7 +392,47 @@ public class PieChart extends JPanel {
                     }
                     start += angle;
                 }
+                createPopupLabel();
             }
+        }
+
+        private void createPopupLabel() {
+            // This code need update it is beta :)
+            Component com = popupComponents;
+            int cw = com.getPreferredSize().width;
+            int ch = com.getPreferredSize().height;
+            Insets insets = getInsets();
+            int x = insets.left;
+            int y = insets.top;
+            int width = getWidth() - (insets.left + insets.right);
+            int height = getHeight() - (insets.top + insets.bottom);
+            int size = Math.min(width, height) / 2;
+            int centerX = getX() + x + size;
+            int centerY = getY() + y + size;
+            float angle = getAngleOfIndex(selectedIndex);
+
+            int lx = (int) (centerX + Math.cos(Math.toRadians(angle)) * (size));
+            int ly = (int) (centerY + Math.sin(Math.toRadians(angle)) * (size));
+            lx -= cw / 2;
+            ly -= ch / 2;
+            lx = Math.min(Math.max(lx, 0), panelRender.getWidth());
+            ly = Math.min(Math.max(ly, 0), panelRender.getHeight());
+            com.setBounds(lx, ly, cw, ch);
+        }
+
+        private float getAngleOfIndex(int index) {
+            float start = -90;
+            float angle = 0;
+            for (int i = 0; i < items.size(); i++) {
+                Item item = items.get(i);
+                float g = (item.percent * 360f);
+                if (i == index) {
+                    angle = start + g / 2f;
+                    break;
+                }
+                start += g;
+            }
+            return angle;
         }
 
         private class Item {
