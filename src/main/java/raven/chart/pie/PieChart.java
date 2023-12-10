@@ -282,6 +282,12 @@ public class PieChart extends JPanel {
         }
 
         @Override
+        public void updateUI() {
+            super.updateUI();
+            imageUpdated = false;
+        }
+
+        @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Insets insets = getInsets();
