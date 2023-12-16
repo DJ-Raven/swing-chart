@@ -1,7 +1,7 @@
 package raven.chart.bar;
 
 import com.formdev.flatlaf.util.ColorFunctions;
-import raven.chart.ChartUtils;
+import raven.chart.utils.ChartUtils;
 
 import javax.swing.*;
 import java.awt.*;

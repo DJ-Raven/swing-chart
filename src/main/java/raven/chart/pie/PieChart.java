@@ -5,7 +5,8 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartColor;
-import raven.chart.ChartUtils;
+import raven.chart.utils.ChartAnimator;
+import raven.chart.utils.ChartUtils;
 import raven.chart.component.ColorIcon;
 import raven.chart.component.PieLabelPopup;
 import raven.chart.data.pie.DefaultPieDataset;
@@ -68,6 +69,10 @@ public class PieChart extends JPanel {
         layeredPane.add(panelFooter);
         initPopupComponent();
         updateDataset();
+    }
+
+    public void startAnimation() {
+        panelRender.animator.start();
     }
 
     public void setSelectedIndex(int selectedIndex) {
@@ -213,13 +218,37 @@ public class PieChart extends JPanel {
         private int oldWidth;
         private int oldHeight;
 
+        protected ChartAnimator animator;
+
         public PanelRender() {
             init();
         }
 
         private void init() {
+            initAnimator();
             items = new ArrayList<>();
             createMouseEvent();
+        }
+
+        private void initAnimator() {
+            animator = new ChartAnimator() {
+                @Override
+                public BufferedImage createImage(BufferedImage image, float animate) {
+                    BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2 = img.createGraphics();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.fill(new Arc2D.Double(0, 0, img.getWidth(), img.getHeight(), 90, -(360 * animate), Arc2D.PIE));
+                    g2.setComposite(AlphaComposite.SrcIn);
+                    g2.drawImage(image, 0, 0, null);
+                    g2.dispose();
+                    return img;
+                }
+
+                @Override
+                public void animatorChanged(float animator) {
+                    repaint();
+                }
+            };
         }
 
         private void createMouseEvent() {
@@ -305,11 +334,13 @@ public class PieChart extends JPanel {
                     oldWidth = width;
                     oldHeight = height;
                 }
-                if (imageRender != null) {
-                    g2.drawImage(imageRender, x, y, null);
-                }
                 g2.translate(x, y);
-                createSelectedIndex(g2, width, height);
+                if (imageRender != null) {
+                    animator.renderImage(g2, imageRender);
+                }
+                if (!animator.isRunning()) {
+                    createSelectedIndex(g2, width, height);
+                }
             }
             g2.dispose();
         }

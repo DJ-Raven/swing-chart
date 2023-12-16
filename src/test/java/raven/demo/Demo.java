@@ -6,7 +6,6 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartLegendRenderer;
-import raven.chart.ChartUtils;
 import raven.chart.bar.HorizontalBarChart;
 import raven.chart.data.category.DefaultCategoryDataset;
 import raven.chart.data.pie.DefaultPieDataset;
@@ -28,10 +27,16 @@ public class Demo extends JFrame {
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
         setLayout(new MigLayout("wrap"));
-        //createLineChart();
+        createLineChart();
         // createBarChart();
         // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         createPieChart();
+        JButton button = new JButton("Start");
+        button.addActionListener(e -> {
+            lineChart.startAnimation();
+            pieChart.startAnimation();
+        });
+        add(button);
     }
 
     private void createLineChart() {
@@ -121,12 +126,12 @@ public class Demo extends JFrame {
     }
 
     private void createPieChart() {
-        PieChart pieChart = new PieChart();
+        pieChart = new PieChart();
         JLabel header1 = new JLabel("Monthly Income");
         header1.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:+2");
         pieChart.setHeader(header1);
-        pieChart.getChartColor().addColor(Color.decode("#f87171"), Color.decode("#fb923c"), Color.decode("#fbbf24"),Color.decode("#a3e635"),Color.decode("#34d399"),Color.decode("#22d3ee"),Color.decode("#818cf8"),Color.decode("#c084fc"));
+        pieChart.getChartColor().addColor(Color.decode("#f87171"), Color.decode("#fb923c"), Color.decode("#fbbf24"), Color.decode("#a3e635"), Color.decode("#34d399"), Color.decode("#22d3ee"), Color.decode("#818cf8"), Color.decode("#c084fc"));
 
         pieChart.setDataset(createData());
         JPanel panel1 = new JPanel(new BorderLayout());
@@ -150,6 +155,7 @@ public class Demo extends JFrame {
     }
 
     private LineChart lineChart;
+    private PieChart pieChart;
 
     public static void main(String[] args) {
         FlatRobotoFont.install();

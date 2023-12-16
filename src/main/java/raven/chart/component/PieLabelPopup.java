@@ -6,7 +6,7 @@ import com.formdev.flatlaf.ui.FlatUIUtils;
 import com.formdev.flatlaf.util.ColorFunctions;
 import com.formdev.flatlaf.util.UIScale;
 import net.miginfocom.swing.MigLayout;
-import raven.chart.ChartUtils;
+import raven.chart.utils.ChartUtils;
 
 import javax.swing.*;
 import java.awt.*;

@@ -7,7 +7,7 @@ import com.formdev.flatlaf.util.ColorFunctions;
 import com.formdev.flatlaf.util.UIScale;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.ChartColor;
-import raven.chart.ChartUtils;
+import raven.chart.utils.ChartUtils;
 import raven.chart.data.category.CategoryDataset;
 
 import javax.swing.*;

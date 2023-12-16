@@ -1,4 +1,4 @@
-package raven.chart;
+package raven.chart.utils;
 
 import javax.swing.*;
 import java.awt.*;

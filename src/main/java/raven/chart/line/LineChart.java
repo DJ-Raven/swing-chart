@@ -2,7 +2,8 @@ package raven.chart.line;
 
 import com.formdev.flatlaf.util.UIScale;
 import raven.chart.ChartColor;
-import raven.chart.ChartUtils;
+import raven.chart.utils.ChartAnimator;
+import raven.chart.utils.ChartUtils;
 import raven.chart.component.CategoryLabelPopup;
 import raven.chart.data.ChartDataInfo2D;
 import raven.chart.blankchart.PanelChartRender;
@@ -37,11 +38,14 @@ public class LineChart extends PlotChart {
     private int oldWidth;
     private int oldHeight;
 
+    private ChartAnimator animator;
+
     public LineChart() {
         init();
     }
 
     private void init() {
+        initAnimator();
         chartColor = new ChartColor();
         mapSpline = new HashMap<>();
         MouseAdapter mouseEvent = new MouseAdapter() {
@@ -58,6 +62,32 @@ public class LineChart extends PlotChart {
         panelRender.addMouseMotionListener(mouseEvent);
         chartColor.addColor(new Color(60, 155, 75), new Color(204, 66, 66));
         updateDataset();
+    }
+
+    private void initAnimator() {
+        animator = new ChartAnimator() {
+            @Override
+            public BufferedImage createImage(BufferedImage image, float animate) {
+                float width = image.getWidth() * animate;
+                if (width <= 1) {
+                    return null;
+                }
+                BufferedImage img = new BufferedImage((int) width, image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = img.createGraphics();
+                g2.drawImage(image, 0, 0, null);
+                g2.dispose();
+                return img;
+            }
+
+            @Override
+            public void animatorChanged(float animator) {
+                repaint();
+            }
+        };
+    }
+
+    public void startAnimation() {
+        animator.start();
     }
 
     public CategoryDataset<String, String> getCategoryDataset() {
@@ -110,7 +140,7 @@ public class LineChart extends PlotChart {
                 oldHeight = height;
             }
             if (imageRender != null) {
-                g2.drawImage(imageRender, 0, 0, null);
+                animator.renderImage(g2, imageRender);
             }
             g2.translate(x, y);
             createSelectedIndex(g2, height);
