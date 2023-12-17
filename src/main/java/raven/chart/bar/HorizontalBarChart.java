@@ -5,9 +5,11 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import net.miginfocom.swing.MigLayout;
 import raven.chart.data.pie.DefaultPieDataset;
 import raven.chart.simple.SimpleDataBarChart;
+import raven.chart.utils.ChartAnimator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -18,12 +20,14 @@ public class HorizontalBarChart extends JPanel {
     protected NumberFormat valuesFormat = new DecimalFormat("$ #,##0.00");
     private DefaultPieDataset<String> dataset = new SimpleDataBarChart();
     private Color barColor = new Color(40, 139, 78);
+    protected ChartAnimator animator;
 
     public HorizontalBarChart() {
         init();
     }
 
     private void init() {
+        initAnimator();
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(new MigLayout("wrap 1,fill", "fill", "[grow 0][fill][grow 0]"));
         setLayout(new BorderLayout());
@@ -49,6 +53,20 @@ public class HorizontalBarChart extends JPanel {
         updateDataset();
     }
 
+    private void initAnimator() {
+        animator = new ChartAnimator() {
+            @Override
+            public BufferedImage createImage(BufferedImage image, float animate) {
+                return null;
+            }
+
+            @Override
+            public void animatorChanged(float animator) {
+                repaint();
+            }
+        };
+    }
+
     public DefaultPieDataset<String> getDataset() {
         return dataset;
     }
@@ -56,6 +74,10 @@ public class HorizontalBarChart extends JPanel {
     public void setDataset(DefaultPieDataset<String> dataset) {
         this.dataset = dataset;
         updateDataset();
+    }
+
+    public void startAnimation() {
+        animator.start();
     }
 
     private void updateDataset() {

@@ -338,9 +338,7 @@ public class PieChart extends JPanel {
                 if (imageRender != null) {
                     animator.renderImage(g2, imageRender);
                 }
-                if (!animator.isRunning()) {
-                    createSelectedIndex(g2, width, height);
-                }
+                createSelectedIndex(g2, width, height);
             }
             g2.dispose();
         }
@@ -407,27 +405,29 @@ public class PieChart extends JPanel {
 
         private void createSelectedIndex(Graphics2D g2, int width, int height) {
             if (selectedIndex != -1 && selectedIndex < items.size()) {
-                int size = Math.min(width, height);
-                int x = (width - size) / 2;
-                int y = (height - size) / 2;
-                float start = 90;
-                for (int i = 0; i < items.size(); i++) {
-                    Item item = items.get(i);
-                    float angle = -(item.percent * 360f);
-                    if (i == selectedIndex) {
-                        float stroke = UIScale.scale(1.5f / 2f);
-                        Area area = new Area(new Arc2D.Double(x, y, size, size, start - stroke / 2f, angle + stroke, Arc2D.PIE));
-                        if (selectedBorderSize > 0) {
-                            double border = UIScale.scale(selectedBorderSize) - stroke;
-                            double s = size - (border * 2);
-                            area.subtract(new Area(new Ellipse2D.Double(x + border, y + border, s, s)));
+                if (!animator.isRunning()) {
+                    int size = Math.min(width, height);
+                    int x = (width - size) / 2;
+                    int y = (height - size) / 2;
+                    float start = 90;
+                    for (int i = 0; i < items.size(); i++) {
+                        Item item = items.get(i);
+                        float angle = -(item.percent * 360f);
+                        if (i == selectedIndex) {
+                            float stroke = UIScale.scale(1.5f / 2f);
+                            Area area = new Area(new Arc2D.Double(x, y, size, size, start - stroke / 2f, angle + stroke, Arc2D.PIE));
+                            if (selectedBorderSize > 0) {
+                                double border = UIScale.scale(selectedBorderSize) - stroke;
+                                double s = size - (border * 2);
+                                area.subtract(new Area(new Ellipse2D.Double(x + border, y + border, s, s)));
+                            }
+                            g2.setColor(chartColor.getColor(i));
+                            g2.setComposite(AlphaComposite.SrcOver.derive(0.5f));
+                            g2.fill(area);
+                            break;
                         }
-                        g2.setColor(chartColor.getColor(i));
-                        g2.setComposite(AlphaComposite.SrcOver.derive(0.5f));
-                        g2.fill(area);
-                        break;
+                        start += angle;
                     }
-                    start += angle;
                 }
                 createPopupLabel();
             }

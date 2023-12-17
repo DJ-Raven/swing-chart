@@ -68,15 +68,7 @@ public class LineChart extends PlotChart {
         animator = new ChartAnimator() {
             @Override
             public BufferedImage createImage(BufferedImage image, float animate) {
-                float width = image.getWidth() * animate;
-                if (width <= 1) {
-                    return null;
-                }
-                BufferedImage img = new BufferedImage((int) width, image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2 = img.createGraphics();
-                g2.drawImage(image, 0, 0, null);
-                g2.dispose();
-                return img;
+               return ChartAnimator.createAnimateLeftToRight(image,animate,getComponentOrientation().isLeftToRight());
             }
 
             @Override

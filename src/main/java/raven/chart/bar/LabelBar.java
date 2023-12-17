@@ -37,11 +37,12 @@ public class LabelBar extends JLabel {
         int width = getWidth();
         int height = getHeight();
         int arc = Math.min(width, height);
+        float animate = barChart.animator.isRunning() ? barChart.animator.getAnimate() : 1f;
         Color gradientColor = ColorFunctions.lighten(getBarChartColor(), 0.05f);
         Shape shape;
         if (getComponentOrientation().isLeftToRight()) {
             if (type == LabelType.HORIZONTAL) {
-                shape = new RoundRectangle2D.Double(0, 0, width * percent, height, arc, arc);
+                shape = new RoundRectangle2D.Double(0, 0, (width * percent) * animate, height, arc, arc);
                 g2.setPaint(new GradientPaint(0, 0, getBarChartColor(), width, 0, gradientColor));
             } else {
                 double v = height * percent;
@@ -50,7 +51,7 @@ public class LabelBar extends JLabel {
             }
         } else {
             if (type == LabelType.HORIZONTAL) {
-                float size = width * percent;
+                float size = (width * percent) * animate;
                 float x = width - size;
                 shape = new RoundRectangle2D.Double(x, 0, size, height, arc, arc);
                 g2.setPaint(new GradientPaint(0, 0, gradientColor, width, 0, getBarChartColor()));

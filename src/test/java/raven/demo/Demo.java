@@ -28,13 +28,14 @@ public class Demo extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new MigLayout("wrap"));
         createLineChart();
-        // createBarChart();
-        // applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        createBarChart();
+        applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         createPieChart();
         JButton button = new JButton("Start");
         button.addActionListener(e -> {
             lineChart.startAnimation();
             pieChart.startAnimation();
+            barChart1.startAnimation();
         });
         add(button);
     }
@@ -110,7 +111,7 @@ public class Demo extends JFrame {
 
     private void createBarChart() {
         // BarChart 1
-        HorizontalBarChart barChart1 = new HorizontalBarChart();
+        barChart1 = new HorizontalBarChart();
         JLabel header1 = new JLabel("Monthly Income");
         header1.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:+2");
@@ -156,6 +157,7 @@ public class Demo extends JFrame {
 
     private LineChart lineChart;
     private PieChart pieChart;
+    HorizontalBarChart barChart1;
 
     public static void main(String[] args) {
         FlatRobotoFont.install();
