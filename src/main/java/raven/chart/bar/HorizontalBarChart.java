@@ -136,6 +136,17 @@ public class HorizontalBarChart extends JPanel {
         this.barColor = barColor;
     }
 
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        super.setOpaque(isOpaque);
+        if (panelRender != null)
+            panelRender.setOpaque(isOpaque);
+        if (panelHeader != null)
+            panelHeader.setOpaque(isOpaque);
+        if (panelFooter != null)
+            panelFooter.setOpaque(isOpaque);
+    }
+
     private class PanelRender extends JPanel {
 
         private List<Item> items;

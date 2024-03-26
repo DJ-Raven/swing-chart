@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import net.miginfocom.swing.MigLayout;
+import raven.chart.ChartColor;
 import raven.chart.ChartLegendRenderer;
 import raven.chart.bar.HorizontalBarChart;
 import raven.chart.data.category.DefaultCategoryDataset;
@@ -29,7 +30,6 @@ public class Demo extends JFrame {
         setLayout(new MigLayout("wrap"));
         createLineChart();
         createBarChart();
-        applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         createPieChart();
         JButton button = new JButton("Start");
         button.addActionListener(e -> {
@@ -38,6 +38,12 @@ public class Demo extends JFrame {
             barChart1.startAnimation();
         });
         add(button);
+
+        // remove chart background
+
+        //lineChart.setOpaque(false);
+        //barChart1.setOpaque(false);
+        //pieChart.setOpaque(false);
     }
 
     private void createLineChart() {
@@ -50,6 +56,9 @@ public class Demo extends JFrame {
         JScrollPane scroll = new JScrollPane(lineChart);
         scroll.putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:0,0,0,0");
+
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
         panel.add(scroll);
         add(panel);
         createLineChartData();

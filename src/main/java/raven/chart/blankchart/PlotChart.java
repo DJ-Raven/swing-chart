@@ -129,4 +129,17 @@ public abstract class PlotChart extends JPanel implements ChartRender {
         panelHeader.revalidate();
         panelHeader.repaint();
     }
+
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        super.setOpaque(isOpaque);
+        if (panelRender != null)
+            panelRender.setOpaque(isOpaque);
+        if (panelValues != null)
+            panelValues.setOpaque(isOpaque);
+        if (panelLegend != null)
+            panelLegend.setOpaque(isOpaque);
+        if (panelHeader != null)
+            panelHeader.setOpaque(isOpaque);
+    }
 }

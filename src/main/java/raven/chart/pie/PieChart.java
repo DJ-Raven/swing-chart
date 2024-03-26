@@ -210,6 +210,19 @@ public class PieChart extends JPanel {
         }
     }
 
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        super.setOpaque(isOpaque);
+        if (panelRender != null)
+            panelRender.setOpaque(isOpaque);
+        if (panelHeader != null)
+            panelHeader.setOpaque(isOpaque);
+        if (panelFooter != null)
+            panelFooter.setOpaque(isOpaque);
+        if (panelLegend != null)
+            panelLegend.setOpaque(isOpaque);
+    }
+
     private class PanelRender extends JPanel {
 
         protected List<Item> items;
