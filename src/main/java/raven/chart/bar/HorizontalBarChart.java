@@ -147,6 +147,17 @@ public class HorizontalBarChart extends JPanel {
             panelFooter.setOpaque(isOpaque);
     }
 
+    public NumberFormat getValuesFormat() {
+        return valuesFormat;
+    }
+
+    public void setValuesFormat(NumberFormat valuesFormat) {
+        this.valuesFormat = valuesFormat;
+        if (dataset != null) {
+            updateDataset();
+        }
+    }
+
     private class PanelRender extends JPanel {
 
         private List<Item> items;

@@ -15,6 +15,7 @@ import raven.chart.pie.PieChart;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,6 +45,9 @@ public class Demo extends JFrame {
         //lineChart.setOpaque(false);
         //barChart1.setOpaque(false);
         //pieChart.setOpaque(false);
+
+        barChart1.setValuesFormat(new DecimalFormat("#,#0.00"));
+        lineChart.setValuesFormat(new DecimalFormat("#,#0.00"));
     }
 
     private void createLineChart() {

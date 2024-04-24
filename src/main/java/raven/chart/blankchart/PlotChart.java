@@ -142,4 +142,13 @@ public abstract class PlotChart extends JPanel implements ChartRender {
         if (panelHeader != null)
             panelHeader.setOpaque(isOpaque);
     }
+
+    public NumberFormat getValuesFormat() {
+        return valuesFormat;
+    }
+
+    public void setValuesFormat(NumberFormat valuesFormat) {
+        this.valuesFormat = valuesFormat;
+        initPanelValues();
+    }
 }
